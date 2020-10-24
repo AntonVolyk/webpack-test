@@ -1,8 +1,8 @@
-import Post from './Post';
-import json from './assets/data.json';
+import Post from '@models/Post';
+import json from './assets/data';
 import xml from './assets/data.xml';
 import csv from './assets/data.csv';
-import webpackLogo from './assets/webpack_logo.png';
+import webpackLogo from './assets/webpack_logo';
 import './styles/styles.css';
 
 const post = new Post('Webpack Post Title', webpackLogo);
