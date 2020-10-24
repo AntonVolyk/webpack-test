@@ -8,7 +8,7 @@ import * as $ from 'jquery';
 
 const post = new Post('Webpack Post Title', webpackLogo);
 
-$('pre').html(post.toString());
+$('pre').addClass('code1').html(post.toString());
 
 console.log(`Post to string: ${post}`);
 console.log('JSON:', json);
