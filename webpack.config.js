@@ -24,6 +24,8 @@ const optimization = () => {
     return config;
 };
 
+const filename = ext => isDev ? `[name].${ext}` : `[name].[hash].${ext}`;
+
 console.log('isDev:', isDev);
 console.log('NODE_ENV:', process.env.NODE_ENV);
 
@@ -35,7 +37,7 @@ module.exports = {
         analytics: './analytics.js'
     },
     output: {
-        filename: '[name].[contenthash].js',
+        filename: filename('js'),
         path: path.resolve(__dirname, 'dist')
     },
     optimization: optimization(),
@@ -68,7 +70,7 @@ module.exports = {
                 ]
         }),
         new MiniCssExtractPlugin({
-            filename: '[name].[contenthash].css'
+            filename: filename('css')
         })
     ],
     module: {
@@ -83,6 +85,20 @@ module.exports = {
                     }
                 },
                     'css-loader']
+            },
+            {
+                test: /\.less$/,
+                use: [
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            hmr: true,
+                            reloadAll: isDev
+                        }
+                    },
+                    'css-loader',
+                    'less-loader'
+                ]
             },
             {
                 test: /\.(png|jpg|svg|gif)$/,
