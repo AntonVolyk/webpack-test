@@ -3,9 +3,26 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssAssetPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
 
 const isDev = process.env.NODE_ENV === 'development';
-const isProd= !isDev;
+const isProd = !isDev;
+
+const optimization = () => {
+    const config = {
+        splitChunks: {
+            chunks: 'all'
+        }
+    };
+    if (isProd) {
+        config.minimizer = [
+            new OptimizeCssAssetPlugin(),
+            new TerserWebpackPlugin()
+        ]
+    }
+    return config;
+};
 
 console.log('isDev:', isDev);
 console.log('NODE_ENV:', process.env.NODE_ENV);
@@ -21,11 +38,7 @@ module.exports = {
         filename: '[name].[contenthash].js',
         path: path.resolve(__dirname, 'dist')
     },
-    optimization: {
-        splitChunks: {
-            chunks: 'all'
-        }
-    },
+    optimization: optimization(),
     devServer: {
         port: 4200,
         hot: isDev
@@ -46,13 +59,13 @@ module.exports = {
         }),
         new CleanWebpackPlugin(),
         new CopyWebpackPlugin({
-         patterns:
-            [
-                {
-                    from: path.resolve(__dirname,'src/assets/favicon.ico'),
-                    to: path.resolve(__dirname,'dist')
-                }
-            ]
+            patterns:
+                [
+                    {
+                        from: path.resolve(__dirname, 'src/assets/favicon.ico'),
+                        to: path.resolve(__dirname, 'dist')
+                    }
+                ]
         }),
         new MiniCssExtractPlugin({
             filename: '[name].[contenthash].css'
@@ -69,7 +82,7 @@ module.exports = {
                         reloadAll: isDev
                     }
                 },
-                'css-loader']
+                    'css-loader']
             },
             {
                 test: /\.(png|jpg|svg|gif)$/,
