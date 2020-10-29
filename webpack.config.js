@@ -1,6 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetPlugin = require('optimize-css-assets-webpack-plugin');
@@ -25,6 +25,22 @@ const optimization = () => {
 };
 
 const filename = ext => isDev ? `[name].${ext}` : `[name].[hash].${ext}`;
+const cssLoaders = extra => {
+    const loaders = [
+        {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+                hmr: true,
+                reloadAll: isDev
+            }
+        },
+        'css-loader'
+    ];
+    if (extra) {
+        loaders.push(extra);
+    }
+    return loaders;
+};
 
 console.log('isDev:', isDev);
 console.log('NODE_ENV:', process.env.NODE_ENV);
@@ -77,42 +93,15 @@ module.exports = {
         rules: [
             {
                 test: /\.css$/,
-                use: [{
-                    loader: MiniCssExtractPlugin.loader,
-                    options: {
-                        hmr: true,
-                        reloadAll: isDev
-                    }
-                },
-                    'css-loader']
+                use: cssLoaders()
             },
             {
                 test: /\.less$/,
-                use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            hmr: true,
-                            reloadAll: isDev
-                        }
-                    },
-                    'css-loader',
-                    'less-loader'
-                ]
+                use: cssLoaders('less-loader')
             },
             {
                 test: /\.s[ac]ss$/,
-                use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            hmr: true,
-                            reloadAll: isDev
-                        }
-                    },
-                    'css-loader',
-                    'sass-loader'
-                ]
+                use: cssLoaders('sass-loader')
             },
             {
                 test: /\.(png|jpg|svg|gif)$/,
